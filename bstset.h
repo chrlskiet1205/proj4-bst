@@ -34,6 +34,7 @@ class BSTSet {
 
   // TODO_STUDENT: add private helper function definitions here
 
+  // FIXME: add ctor_size, dtor
  public:
   /**
    * Creates an empty `BSTSet`. Runs in O(1).

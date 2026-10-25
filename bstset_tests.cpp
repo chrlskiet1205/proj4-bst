@@ -50,20 +50,32 @@ TEST(BSTSetCore, ConstructorTest) {
   EXPECT_TRUE(defaultBST.empty());
 }
 
-TEST(BSTSetCore, EmptyAndSizeTest) {
+TEST(BSTSetCore, EmptyAndSizeAndInsertAndContainsTest) {
   BSTSet<int> testbst;
   ASSERT_EQ(size_t{0}, testbst.size());
   ASSERT_TRUE(testbst.empty());
+  ASSERT_FALSE(testbst.contains(1));
 
   testbst.insert(1);
   ASSERT_EQ(size_t{1}, testbst.size());
   ASSERT_FALSE(testbst.empty());
+  ASSERT_TRUE(testbst.contains(1));
+  ASSERT_FALSE(testbst.contains(10));
+
   testbst.insert(10);
   ASSERT_EQ(size_t{2}, testbst.size());
   ASSERT_FALSE(testbst.empty());
+  ASSERT_TRUE(testbst.contains(1));
+  ASSERT_TRUE(testbst.contains(10));
+  ASSERT_FALSE(testbst.contains(100));
+
   testbst.insert(100);
   ASSERT_EQ(size_t{3}, testbst.size());
   ASSERT_FALSE(testbst.empty());
+  ASSERT_TRUE(testbst.contains(1));
+  ASSERT_TRUE(testbst.contains(10));
+  ASSERT_TRUE(testbst.contains(100));
+
   testbst.insert(10);
   ASSERT_EQ(size_t{3}, testbst.size());
   ASSERT_FALSE(testbst.empty());
@@ -71,4 +83,15 @@ TEST(BSTSetCore, EmptyAndSizeTest) {
   testbst.clear();
   ASSERT_EQ(size_t{0}, testbst.size());
   ASSERT_TRUE(testbst.empty());
+  ASSERT_FALSE(testbst.contains(1));
+  ASSERT_FALSE(testbst.contains(10));
+  ASSERT_FALSE(testbst.contains(100));
+}
+
+TEST(BSTSetCore, DestructorTest) {
+  {
+    BSTSet<int> testbst;
+    testbst.insert(1);
+    testbst.insert(10);
+  }
 }
