@@ -157,7 +157,8 @@ TEST(BSTSetCore, SmoothOperator) {
   EXPECT_FALSE(testbst.contains(1));
 
   // Actual self-assignment.
-  testbst = testbst;
+  BSTSet<int>& same_set = testbst;
+  testbst = same_set;
   EXPECT_EQ(size_t{3}, testbst.size());
   EXPECT_TRUE(testbst.contains(2));
   EXPECT_TRUE(testbst.contains(3));
