@@ -33,12 +33,42 @@ class Random {
 
 std::mt19937 Random::rng;
 
-TEST(FakeTest, PleaseDeleteOnceYouWriteSome) {
-  // If no tests exist, GoogleTest fails to compile with a fairly confusing
-  // message. We have this empty test that does nothing to allow an empty
-  // autograder submission to compile and regularly fail. Once you write your
-  // own tests for the project, you can delete this one.
-  EXPECT_THAT(1, Eq(1));
-}
+// TEST(FakeTest, PleaseDeleteOnceYouWriteSome) {
+//   // If no tests exist, GoogleTest fails to compile with a fairly confusing
+//   // message. We have this empty test that does nothing to allow an empty
+//   // autograder submission to compile and regularly fail. Once you write your
+//   // own tests for the project, you can delete this one.
+//   EXPECT_THAT(1, Eq(1));
+// }
 
 }  // namespace
+
+TEST(BSTSetCore, ConstructorTest) {
+  // empty BSTSet test
+  BSTSet<int> defaultBST;
+  EXPECT_EQ(size_t{0}, defaultBST.size());
+  EXPECT_TRUE(defaultBST.empty());
+}
+
+TEST(BSTSetCore, EmptyAndSizeTest) {
+  BSTSet<int> testbst;
+  ASSERT_EQ(size_t{0}, testbst.size());
+  ASSERT_TRUE(testbst.empty());
+
+  testbst.insert(1);
+  ASSERT_EQ(size_t{1}, testbst.size());
+  ASSERT_FALSE(testbst.empty());
+  testbst.insert(10);
+  ASSERT_EQ(size_t{2}, testbst.size());
+  ASSERT_FALSE(testbst.empty());
+  testbst.insert(100);
+  ASSERT_EQ(size_t{3}, testbst.size());
+  ASSERT_FALSE(testbst.empty());
+  testbst.insert(10);
+  ASSERT_EQ(size_t{3}, testbst.size());
+  ASSERT_FALSE(testbst.empty());
+
+  testbst.clear();
+  ASSERT_EQ(size_t{0}, testbst.size());
+  ASSERT_TRUE(testbst.empty());
+}
