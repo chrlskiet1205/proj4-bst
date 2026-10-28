@@ -41,6 +41,9 @@ class BSTSet {
    */
   BSTSet() {
     // TODO_STUDENT
+    this->root = nullptr;
+    this->sz = size_t{0};
+    this->curr = root;
   }
 
   /**
@@ -48,7 +51,7 @@ class BSTSet {
    */
   bool empty() const {
     // TODO_STUDENT
-    return false;
+    return (!(this->sz));
   }
 
   /**
@@ -56,7 +59,7 @@ class BSTSet {
    */
   size_t size() const {
     // TODO_STUDENT
-    return 0;
+    return (this->sz);
   }
 
   /**
@@ -68,8 +71,36 @@ class BSTSet {
    *
    * Runs in O(H), where H is the height of the tree.
    */
+
+  // FIXME: allocate memory for new node, not just changing the value of an
+  // inexistent/uinitialized node
   void insert(T value) {
     // TODO_STUDENT
+    if (contains(value)) {
+      return;
+    }
+    if (root == nullptr) {
+      root = new BSTNode(value, nullptr);
+      (this->sz)++;
+      return;
+    }
+    BSTNode* temp = root;
+    while (true) {
+      if (value < temp->value) {
+        if (temp->left == nullptr) {
+          temp->left = new BSTNode(value, temp);
+          break;
+        }
+        temp = temp->left;
+      } else {
+        if (temp->right == nullptr) {
+          temp->right = new BSTNode(value, temp);
+          break;
+        }
+        temp = temp->right;
+      }
+    }
+    (this->sz)++;
   }
 
   /**
@@ -80,7 +111,30 @@ class BSTSet {
    */
   bool contains(const T& value) const {
     // TODO_STUDENT
+    BSTNode* temp = this->root;
+
+    while (temp != nullptr) {
+      if (value == temp->value) {
+        return true;
+      }
+
+      else if (value < temp->value) {
+        temp = temp->left;
+      } else if (value > temp->value) {
+        temp = temp->right;
+      }
+    }
     return false;
+  }
+
+  void dtor_helper(BSTNode*& curr) {
+    if (curr == nullptr) {
+      return;
+    }
+    dtor_helper(curr->left);
+    dtor_helper(curr->right);
+    delete curr;
+    curr = nullptr;
   }
 
   /**
@@ -90,6 +144,12 @@ class BSTSet {
    */
   void clear() {
     // TODO_STUDENT
+    dtor_helper(this->root);
+
+    // this->curr = nullptr;
+    // this->root = nullptr;
+    this->sz = size_t{0};
+    this->curr = nullptr;
   }
 
   /**
@@ -99,6 +159,11 @@ class BSTSet {
    */
   ~BSTSet() {
     // TODO_STUDENT
+    dtor_helper(this->root);
+    // this->curr = nullptr;
+    // this->root = nullptr;
+    this->sz = size_t{0};
+    this->curr = nullptr;
   }
 
   /**
@@ -134,6 +199,13 @@ class BSTSet {
    */
   BSTSet(const BSTSet& other) {
     // TODO_STUDENT
+
+    // edge case: empty tree
+    if (other.root == nullptr) {
+      return;
+    }
+
+    // not empty
   }
 
   /**

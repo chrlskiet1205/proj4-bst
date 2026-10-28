@@ -50,42 +50,105 @@ TEST(BSTSetCore, ConstructorTest) {
   EXPECT_TRUE(defaultBST.empty());
 }
 
-TEST(BSTSetCore, EmptyAndSizeAndInsertAndContainsTest) {
+TEST(BSTSetCore, EmptyTest) {
   BSTSet<int> testbst;
-  ASSERT_EQ(size_t{0}, testbst.size());
-  ASSERT_TRUE(testbst.empty());
-  ASSERT_FALSE(testbst.contains(1));
+  EXPECT_TRUE(testbst.empty());
 
   testbst.insert(1);
-  ASSERT_EQ(size_t{1}, testbst.size());
-  ASSERT_FALSE(testbst.empty());
-  ASSERT_TRUE(testbst.contains(1));
-  ASSERT_FALSE(testbst.contains(10));
+  EXPECT_FALSE(testbst.empty());
 
   testbst.insert(10);
-  ASSERT_EQ(size_t{2}, testbst.size());
-  ASSERT_FALSE(testbst.empty());
-  ASSERT_TRUE(testbst.contains(1));
-  ASSERT_TRUE(testbst.contains(10));
-  ASSERT_FALSE(testbst.contains(100));
+  EXPECT_FALSE(testbst.empty());
 
   testbst.insert(100);
-  ASSERT_EQ(size_t{3}, testbst.size());
-  ASSERT_FALSE(testbst.empty());
-  ASSERT_TRUE(testbst.contains(1));
-  ASSERT_TRUE(testbst.contains(10));
-  ASSERT_TRUE(testbst.contains(100));
+  EXPECT_FALSE(testbst.empty());
 
   testbst.insert(10);
-  ASSERT_EQ(size_t{3}, testbst.size());
-  ASSERT_FALSE(testbst.empty());
+  EXPECT_FALSE(testbst.empty());
 
   testbst.clear();
-  ASSERT_EQ(size_t{0}, testbst.size());
-  ASSERT_TRUE(testbst.empty());
-  ASSERT_FALSE(testbst.contains(1));
-  ASSERT_FALSE(testbst.contains(10));
-  ASSERT_FALSE(testbst.contains(100));
+  EXPECT_TRUE(testbst.empty());
+}
+
+TEST(BSTSetCore, SizeTest) {
+  BSTSet<int> testbst;
+  EXPECT_EQ(size_t{0}, testbst.size());
+
+  testbst.insert(1);
+  EXPECT_EQ(size_t{1}, testbst.size());
+
+  testbst.insert(10);
+  EXPECT_EQ(size_t{2}, testbst.size());
+
+  testbst.insert(100);
+  EXPECT_EQ(size_t{3}, testbst.size());
+
+  testbst.insert(10);
+  EXPECT_EQ(size_t{3}, testbst.size());
+
+  testbst.clear();
+  EXPECT_EQ(size_t{0}, testbst.size());
+}
+
+TEST(BSTSetCore, InsertTest) {
+  BSTSet<int> testbst;
+
+  testbst.insert(1);
+  EXPECT_EQ(size_t{1}, testbst.size());
+  EXPECT_TRUE(testbst.contains(1));
+
+  testbst.insert(10);
+  EXPECT_EQ(size_t{2}, testbst.size());
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_TRUE(testbst.contains(10));
+
+  testbst.insert(100);
+  EXPECT_EQ(size_t{3}, testbst.size());
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_TRUE(testbst.contains(10));
+  EXPECT_TRUE(testbst.contains(100));
+
+  testbst.insert(10);
+  EXPECT_EQ(size_t{3}, testbst.size());
+  EXPECT_TRUE(testbst.contains(10));
+}
+
+TEST(BSTSetCore, ContainsTest) {
+  BSTSet<int> testbst;
+  EXPECT_FALSE(testbst.contains(1));
+
+  testbst.insert(1);
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_FALSE(testbst.contains(10));
+
+  testbst.insert(10);
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_TRUE(testbst.contains(10));
+  EXPECT_FALSE(testbst.contains(100));
+
+  testbst.insert(100);
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_TRUE(testbst.contains(10));
+  EXPECT_TRUE(testbst.contains(100));
+
+  testbst.clear();
+  EXPECT_FALSE(testbst.contains(1));
+  EXPECT_FALSE(testbst.contains(10));
+  EXPECT_FALSE(testbst.contains(100));
+}
+
+TEST(BSTSetCore, ClearTest) {
+  BSTSet<int> testbst;
+  testbst.insert(1);
+  testbst.insert(10);
+  testbst.insert(100);
+
+  testbst.clear();
+  EXPECT_EQ(size_t{0}, testbst.size());
+  EXPECT_TRUE(testbst.empty());
+  EXPECT_FALSE(testbst.contains(1));
+  EXPECT_FALSE(testbst.contains(10));
+  EXPECT_FALSE(testbst.contains(100));
 }
 
 TEST(BSTSetCore, DestructorTest) {
@@ -99,22 +162,22 @@ TEST(BSTSetCore, DestructorTest) {
 TEST(BSTSetCore, CopyConstructorTest) {
   BSTSet<int> blank;
   BSTSet<int> blank_copy(blank);
-  ASSERT_TRUE(blank_copy.empty());
-  ASSERT_EQ(size_t{0}, blank_copy.size());
+  EXPECT_TRUE(blank_copy.empty());
+  EXPECT_EQ(size_t{0}, blank_copy.size());
 
   BSTSet<int> testbst;
   testbst.insert(1);
   testbst.insert(10);
 
   BSTSet<int> copy(testbst);
-  ASSERT_EQ(size_t{2}, copy.size());
-  ASSERT_FALSE(copy.empty());
-  ASSERT_TRUE(copy.contains(1));
-  ASSERT_TRUE(copy.contains(10));
-  ASSERT_FALSE(copy.contains(100));
+  EXPECT_EQ(size_t{2}, copy.size());
+  EXPECT_FALSE(copy.empty());
+  EXPECT_TRUE(copy.contains(1));
+  EXPECT_TRUE(copy.contains(10));
+  EXPECT_FALSE(copy.contains(100));
 }
 
-TEST(BSTSetCore, SmoothOperator) {
+TEST(BSTSetCore, AssignmentOperatorTest) {
   BSTSet<int> blank;
 
   BSTSet<int> testbst;
@@ -124,16 +187,16 @@ TEST(BSTSetCore, SmoothOperator) {
   // self assignment check
   BSTSet<int> copy = testbst;
   testbst = copy;
-  ASSERT_FALSE(testbst.empty());
-  ASSERT_TRUE(testbst.contains(1));
-  ASSERT_TRUE(testbst.contains(10));
-  ASSERT_FALSE(testbst.contains(100));
-  ASSERT_EQ(size_t{2}, testbst.size());
+  EXPECT_FALSE(testbst.empty());
+  EXPECT_TRUE(testbst.contains(1));
+  EXPECT_TRUE(testbst.contains(10));
+  EXPECT_FALSE(testbst.contains(100));
+  EXPECT_EQ(size_t{2}, testbst.size());
 
   // copying empty bst check
   BSTSet<int> empty_copy = blank;
-  ASSERT_TRUE(empty_copy.empty());
-  ASSERT_EQ(size_t{0}, empty_copy.size());
+  EXPECT_TRUE(empty_copy.empty());
+  EXPECT_EQ(size_t{0}, empty_copy.size());
 
   // Assign empty to non-empty.
   testbst = blank;
