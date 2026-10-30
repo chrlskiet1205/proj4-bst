@@ -1,0 +1,14 @@
+.clang-format
+.clang-format:Zone.Identifier
+bstset_main
+bstset_main.cpp:Zone.Identifier
+bstset_tests
+bstset_tests.cpp:Zone.Identifier
+bstset.h:Zone.Identifier
+Makefile:Zone.Identifier
+suppr.txt
+suppr.txt:Zone.Identifier
+wordle_main.cpp:Zone.Identifier
+wordle_tests.cpp:Zone.Identifier
+wordle.cpp:Zone.Identifier
+words.txt:Zone.Identifier

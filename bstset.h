@@ -72,7 +72,6 @@ class BSTSet {
    * Runs in O(H), where H is the height of the tree.
    */
 
-  // FIXME: allocate memory for new node, not just changing the value of an
   // inexistent/uinitialized node
   void insert(T value) {
     // TODO_STUDENT
@@ -189,6 +188,19 @@ class BSTSet {
     return "";
   }
 
+  BSTNode* ctor_helper(BSTNode* par, BSTNode* otherNode){
+
+    if (otherNode == nullptr){
+      return nullptr;
+    }
+
+    BSTNode* temp = new BSTNode(otherNode->value, par);
+    par = temp;
+    temp->left = ctor_helper(temp, otherNode->left);
+    temp->right = ctor_helper(temp, otherNode->right);
+    return temp;
+  }
+
   /**
    * Copy constructor.
    *
@@ -199,11 +211,11 @@ class BSTSet {
    */
   BSTSet(const BSTSet& other) {
     // TODO_STUDENT
-
+    this->root = nullptr;
+    this->sz = other.sz;
+    this->curr = nullptr;
     // edge case: empty tree
-    if (other.root == nullptr) {
-      return;
-    }
+    this->root = ctor_helper(nullptr, other.root);
 
     // not empty
   }
