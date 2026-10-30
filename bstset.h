@@ -165,29 +165,6 @@ class BSTSet {
     this->curr = nullptr;
   }
 
-  /**
-   * Converts the `BSTSet` to a string representation, with the values
-   * in-order by value.
-   *
-   * Example:
-   *
-   * c++
-   * BSTSet<string> names;
-   * names.insert("Gwen");
-   * names.insert("Jen");
-   * names.insert("Ben");
-   * names.insert("Sven");
-   *
-   * Calling `names.to_string()` would return the following
-   * string: `{Ben, Gwen, Jen, Sven}`
-   *
-   * Runs in O(N), where N is the number of elements.
-   */
-  string to_string() const {
-    // TODO_STUDENT
-    return "";
-  }
-
   BSTNode* ctor_helper(BSTNode* par, BSTNode* otherNode){
 
     if (otherNode == nullptr){
@@ -214,7 +191,6 @@ class BSTSet {
     this->root = nullptr;
     this->sz = other.sz;
     this->curr = nullptr;
-    // edge case: empty tree
     this->root = ctor_helper(nullptr, other.root);
 
     // not empty
@@ -229,13 +205,46 @@ class BSTSet {
    * Runs in O(N + O), where N is the number of elements in `this`, and O is
    * the number of elements in `other`.
    */
-  BSTSet& operator=(const BSTSet& other) {
+  BSTSet& operator=(const BSTSet& other){
     // TODO_STUDENT
+    // protect against self-assignment
+    if (this == &other){
+      return *this;
+    }
+    this->clear();
+    this->root = nullptr;
+    this->curr = nullptr;
+    this->sz = other.sz;
+    this->root = ctor_helper(nullptr, other.root);
+
     return *this;
   }
 
   // end of milestone 1
   // =========================================================================
+
+  /**
+   * Converts the `BSTSet` to a string representation, with the values
+   * in-order by value.
+   *
+   * Example:
+   *
+   * c++
+   * BSTSet<string> names;
+   * names.insert("Gwen");
+   * names.insert("Jen");
+   * names.insert("Ben");
+   * names.insert("Sven");
+   *
+   * Calling `names.to_string()` would return the following
+   * string: `{Ben, Gwen, Jen, Sven}`
+   *
+   * Runs in O(N), where N is the number of elements.
+   */
+  string to_string() const {
+    // TODO_STUDENT
+    return "";
+  }
 
   /**
    * Locates the smallest element in the BSTSet, and removes it
