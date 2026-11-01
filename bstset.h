@@ -165,9 +165,8 @@ class BSTSet {
     this->curr = nullptr;
   }
 
-  BSTNode* ctor_helper(BSTNode* par, BSTNode* otherNode){
-
-    if (otherNode == nullptr){
+  BSTNode* ctor_helper(BSTNode* par, BSTNode* otherNode) {
+    if (otherNode == nullptr) {
       return nullptr;
     }
 
@@ -205,10 +204,10 @@ class BSTSet {
    * Runs in O(N + O), where N is the number of elements in `this`, and O is
    * the number of elements in `other`.
    */
-  BSTSet& operator=(const BSTSet& other){
+  BSTSet& operator=(const BSTSet& other) {
     // TODO_STUDENT
     // protect against self-assignment
-    if (this == &other){
+    if (this == &other) {
       return *this;
     }
     this->clear();
@@ -223,6 +222,21 @@ class BSTSet {
   // end of milestone 1
   // =========================================================================
 
+  // helper function: fetch value from the tree
+  void inorder_append(BSTNode* curr, ostringstream& val, bool& isFirst) const {
+    if (curr == nullptr) {
+      return;
+    }
+    inorder_append(curr->left, val, isFirst);
+
+    if (!isFirst){
+      val << ", ";
+    }
+    val << curr->value;
+    isFirst= false;
+    // val << curr->value << ", ";
+    inorder_append(curr->right, val, isFirst);
+  }
   /**
    * Converts the `BSTSet` to a string representation, with the values
    * in-order by value.
@@ -243,7 +257,14 @@ class BSTSet {
    */
   string to_string() const {
     // TODO_STUDENT
-    return "";
+    ostringstream ss;
+    ss << "{";
+    BSTNode* curr = this->root;
+    bool isFirst = true;
+    inorder_append(curr, ss, isFirst);
+
+    ss << "}";
+    return ss.str();
   }
 
   /**

@@ -227,3 +227,31 @@ TEST(BSTSetCore, AssignmentOperatorTest) {
   EXPECT_TRUE(testbst.contains(3));
   EXPECT_TRUE(testbst.contains(4));
 }
+
+/**
+ * Converts the `BSTSet` to a string representation, with the values
+ * in-order by value.
+ *
+ * Example:
+ *
+ * c++
+ * BSTSet<string> names;
+ * names.insert("Gwen");
+ * names.insert("Jen");
+ * names.insert("Ben");
+ * names.insert("Sven");
+ *
+ * Calling `names.to_string()` would return the following
+ * string: `{Ben, Gwen, Jen, Sven}`
+ *
+ * Runs in O(N), where N is the number of elements.
+ */
+TEST(BSTSetCore, ToString) {
+  BSTSet<string> names;
+ names.insert("Gwen");
+ names.insert("Jen");
+ names.insert("Ben");
+ names.insert("Sven");
+
+ EXPECT_EQ("{Ben, Gwen, Jen, Sven}", names.to_string());
+}
