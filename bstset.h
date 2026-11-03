@@ -43,7 +43,7 @@ class BSTSet {
     // TODO_STUDENT
     this->root = nullptr;
     this->sz = size_t{0};
-    this->curr = root;
+    this->curr = nullptr;
   }
 
   /**
@@ -229,11 +229,11 @@ class BSTSet {
     }
     inorder_append(curr->left, val, isFirst);
 
-    if (!isFirst){
+    if (!isFirst) {
       val << ", ";
     }
     val << curr->value;
-    isFirst= false;
+    isFirst = false;
     // val << curr->value << ", ";
     inorder_append(curr->right, val, isFirst);
   }
@@ -267,6 +267,18 @@ class BSTSet {
     return ss.str();
   }
 
+  BSTNode* find_min(BSTNode* node, BSTNode*& parent) const {
+    if (node == nullptr) {
+      return nullptr;
+    }
+
+    while (node->left != nullptr) {
+      parent = node;
+      node = node->left;
+    }
+    return node;
+  }
+
   /**
    * Locates the smallest element in the BSTSet, and removes it
    * from the `BSTSet`. If the `BSTSet` is empty, throws a
@@ -279,7 +291,29 @@ class BSTSet {
    */
   T remove_min() {
     // TODO_STUDENT
-    return T{};
+    BSTNode* parent = nullptr;
+    BSTNode* curr = find_min(this->root, parent);
+
+    if (curr == nullptr) {
+      throw runtime_error("tree is empty!");
+    }
+    T removed = curr->value;
+    BSTNode* next = curr->right;
+    // edge case: remove root
+    if (parent == nullptr) {
+      this->root = next;
+    } else {
+      parent->left = next;
+    }
+
+    // set parent for the child node if it is not null
+    if (next != nullptr) {
+      next->parent = parent;
+    }
+    delete curr;
+    // minus size
+    (this->sz)--;
+    return removed;
   }
 
   /**
@@ -291,6 +325,14 @@ class BSTSet {
    */
   void begin() {
     // TODO_STUDENT
+    if (this->root == nullptr) {
+      this->curr = nullptr;
+      return;
+    }
+    this->curr = this->root;
+    while (this->curr->left != nullptr) {
+      this->curr = this->curr->left;
+    }
   }
 
   /**
@@ -315,10 +357,34 @@ class BSTSet {
    */
   bool next(T& value) {
     // TODO_STUDENT
-    return false;
+
+    if (this->curr == nullptr) {
+      return false;
+    }
+    BSTNode* node = curr;
+    value = node->value;
+
+    if (curr->right != nullptr) {
+      node = node->right;
+      while (node->left != nullptr) {
+        node = node->left;
+      }
+      curr = node;
+    } else {
+      while (node->parent != nullptr && node->parent->right == node) {
+        node = node->parent;
+      }
+      curr = node->parent;
+      // value = curr->value;
+    }
+
+    return true;
   }
 
   // =========================================================================
+  bool isRightChild(BSTNode* curr) {
+    return curr->parent != nullptr && curr->parent->right == curr;
+  }
 
   /**
    * Removes the given element from the `BSTSet`, and returns the
@@ -331,8 +397,63 @@ class BSTSet {
    * Runs in worst-case O(H) where H is the height of the tree.
    */
   T erase(const T& value) {
-    // TODO_STUDENT
-    return T{};
+    BSTNode* toDelete = root;
+    while (toDelete != nullptr && toDelete->value != value) {
+      toDelete = value < toDelete->value ? toDelete->left : toDelete->right;
+    }
+    if (toDelete == nullptr) {
+      throw out_of_range("value does not exist!");
+    }
+
+    T erased = toDelete->value;
+    BSTNode* parent = toDelete->parent;
+
+    if (toDelete->left == nullptr || toDelete->right == nullptr) {
+      BSTNode* child =
+          toDelete->left != nullptr ? toDelete->left : toDelete->right;
+      if (parent == nullptr) {
+        root = child;
+      } else if (parent->left == toDelete) {
+        parent->left = child;
+      } else {
+        parent->right = child;
+      }
+      if (child != nullptr) {
+        child->parent = parent;
+      }
+    } else {
+      BSTNode* successor = toDelete->right;
+      while (successor->left != nullptr) {
+        successor = successor->left;
+      }
+
+      if (successor->parent != toDelete) {
+        successor->parent->left = successor->right;
+        if (successor->right != nullptr) {
+          successor->right->parent = successor->parent;
+        }
+        successor->right = toDelete->right;
+        successor->right->parent = successor;
+      }
+
+      successor->parent = parent;
+      if (parent == nullptr) {
+        root = successor;
+      } else if (parent->left == toDelete) {
+        parent->left = successor;
+      } else {
+        parent->right = successor;
+      }
+      successor->left = toDelete->left;
+      successor->left->parent = successor;
+    }
+
+    if (curr == toDelete) {
+      curr = nullptr;
+    }
+    delete toDelete;
+    --sz;
+    return erased;
   }
 
   // =========================================================================
