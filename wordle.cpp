@@ -1,8 +1,10 @@
+#include <cmath>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <cmath>
+#include <vector>
 
 #include "bstset.h"
 #include "include/worldle.h"
@@ -10,12 +12,20 @@
 using namespace std;
 
 /**
- * Given the `filename` of a file that contains a list of 
- * words (one word per line), inserts all the words in the 
+ * Given the `filename` of a file that contains a list of
+ * words (one word per line), inserts all the words in the
  * file into the input `BSTSet words`.
  */
 void load_words(const string& filename, BSTSet<string>& words) {
-  // TODO_STUDENT
+  ifstream input(filename);
+  if (!input) {
+    throw runtime_error("Unable to open word list: " + filename);
+  }
+
+  string word;
+  while (input >> word) {
+    words.insert(word);
+  }
 }
 
 /**
@@ -33,8 +43,29 @@ void load_words(const string& filename, BSTSet<string>& words) {
  * - `get_pattern("MERRY", "CORER") == "01210"`
  */
 string get_pattern(const string& guess, const string& winning_word) {
-  // TODO_STUDENT
-  return "";
+  if (guess.size() != winning_word.size()) {
+    throw invalid_argument("Guess and winning word must have the same length");
+  }
+
+  string pattern(guess.size(), '0');
+  unordered_map<char, int> unmatched_letters;
+
+  for (size_t i = 0; i < guess.size(); ++i) {
+    if (guess[i] == winning_word[i]) {
+      pattern[i] = '2';
+    } else {
+      ++unmatched_letters[winning_word[i]];
+    }
+  }
+
+  for (size_t i = 0; i < guess.size(); ++i) {
+    if (pattern[i] != '2' && unmatched_letters[guess[i]] > 0) {
+      pattern[i] = '1';
+      --unmatched_letters[guess[i]];
+    }
+  }
+
+  return pattern;
 }
 
 /**
@@ -55,7 +86,18 @@ string get_pattern(const string& guess, const string& winning_word) {
  */
 void filter_words(BSTSet<string>& remaining_words, const string& guess,
                   const string& feedback) {
-  // TODO_STUDENT
+  vector<string> words_to_remove;
+  remaining_words.begin();
+  string word;
+  while (remaining_words.next(word)) {
+    if (get_pattern(guess, word) != feedback) {
+      words_to_remove.push_back(word);
+    }
+  }
+
+  for (const string& word_to_remove : words_to_remove) {
+    remaining_words.erase(word_to_remove);
+  }
 }
 
 /**
@@ -63,13 +105,23 @@ void filter_words(BSTSet<string>& remaining_words, const string& guess,
  * the word that maximizes the entropy.
  */
 string recommend(BSTSet<string>& remaining_words) {
-  // TODO_STUDENT
-  return "";
+  string best_word;
+  double best_entropy = -1.0;
+
+  remaining_words.begin();
+  string word;
+  while (remaining_words.next(word)) {
+    double word_entropy = entropy(word, remaining_words);
+    if (word_entropy > best_entropy) {
+      best_entropy = word_entropy;
+      best_word = word;
+    }
+  }
+
+  return best_word;
 }
 
-
-//###############################################################################
-
+// ###############################################################################
 
 /**
  * Computes the entropy of a candidate `guess`, given the
@@ -107,7 +159,7 @@ double entropy(const string& guess, const BSTSet<string>& remaining_words) {
  * they got from playing a Wordle word in a Wordle game engine.
  *
  * Will stop once the user notifies that they won the Wordle game.
- * 
+ *
  * This implementation will be given to the students.
  */
 void recommender(BSTSet<string>& remaining_words) {

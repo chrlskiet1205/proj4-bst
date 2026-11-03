@@ -28,6 +28,21 @@ TEST(Wordle, LoadWords) {
   }
 }
 
+TEST(Wordle, LoadWordsAddsToExistingSet) {
+  BSTSet<string> words;
+  words.insert("extra");
+
+  load_words("data/tiny_words.txt", words);
+
+  EXPECT_EQ(size_t{6}, words.size());
+  EXPECT_TRUE(words.contains("extra"));
+  EXPECT_TRUE(words.contains("lousy"));
+  EXPECT_TRUE(words.contains("awful"));
+  EXPECT_TRUE(words.contains("great"));
+  EXPECT_TRUE(words.contains("manic"));
+  EXPECT_TRUE(words.contains("rabid"));
+}
+
 TEST(Wordle, GetPattern_AllGreen) {
   EXPECT_THAT(get_pattern("RAISE", "RAISE"), StrEq("22222"))
       << "If the guess equals the winning word, the pattern should be all "
@@ -79,6 +94,15 @@ TEST(Wordle, GetPattern_TooManyDuplicateLetters) {
   EXPECT_THAT(get_pattern("AAAAA", "BANAL"), StrEq("02020"))
       << "Algorithm should not mark more yellow letters than exist in the "
          "winning word.";
+}
+
+TEST(Wordle, GetPattern_GreensTakePrecedenceOverDuplicateYellows) {
+  EXPECT_THAT(get_pattern("AABBB", "AACCC"), StrEq("22000"));
+  EXPECT_THAT(get_pattern("AABBB", "ABAAA"), StrEq("21100"));
+}
+
+TEST(Wordle, GetPattern_RejectsDifferentWordLengths) {
+  EXPECT_THROW(get_pattern("WORD", "WORDS"), invalid_argument);
 }
 
 TEST(Wordle, GetPattern_AllYellow) {
@@ -216,6 +240,22 @@ TEST(Wordle, FilterWords_NoMatchesRemain) {
   EXPECT_THAT(words.size(), Eq(0));
 }
 
+TEST(Wordle, FilterWordsWithDuplicateLetters) {
+  BSTSet<string> words;
+  words.insert("AACCC");
+  words.insert("ABCCC");
+  words.insert("AABBB");
+  words.insert("CCCAA");
+
+  filter_words(words, "AABBB", "22000");
+
+  EXPECT_EQ(size_t{1}, words.size());
+  EXPECT_TRUE(words.contains("AACCC"));
+  EXPECT_FALSE(words.contains("ABCCC"));
+  EXPECT_FALSE(words.contains("AABBB"));
+  EXPECT_FALSE(words.contains("CCCAA"));
+}
+
 TEST(Wordle, FilterWords_MultipleCalls) {
   string keep_message =
       "If a word in set matches the feedback pattern it should remain after "
@@ -262,6 +302,11 @@ TEST(Wordle, RecommendSingleWord) {
   string rec = recommend(words);
 
   EXPECT_THAT(rec, StrEq("APPLE"));
+}
+
+TEST(Wordle, RecommendEmptySet) {
+  BSTSet<string> words;
+  EXPECT_TRUE(recommend(words).empty());
 }
 
 TEST(Wordle, RecommendTwoWords) {
